@@ -7,7 +7,7 @@ $stmt = $pdo->prepare("SELECT n.*, c.name as category_name, a.username as author
                        FROM news n 
                        LEFT JOIN categories c ON n.category_id = c.id
                        LEFT JOIN admins a ON n.author_id = a.id
-                       WHERE n.id = ? AND n.is_published = TRUE");
+                       WHERE n.id = ? AND n.is_published = 1");
 $stmt->execute([$id]);
 $news = $stmt->fetch();
 
@@ -19,7 +19,7 @@ if (!$news) {
 $related = $pdo->prepare("SELECT n.*, c.name as category_name 
                           FROM news n 
                           LEFT JOIN categories c ON n.category_id = c.id 
-                          WHERE n.category_id = ? AND n.id != ? AND n.is_published = TRUE 
+                          WHERE n.category_id = ? AND n.id != ? AND n.is_published = 1 
                           ORDER BY n.published_at DESC LIMIT 3");
 $related->execute([$news['category_id'], $id]);
 $relatedNews = $related->fetchAll();
@@ -452,6 +452,31 @@ $relatedNews = $related->fetchAll();
         </div>
         <?php endif; ?>
     </div>
+
+    <!-- Footer -->
+    <footer style="background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: white; padding: 3rem 0 1.5rem; margin-top: 4rem;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h5 style="font-weight: 700; margin-bottom: 1.5rem; background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        <i class="fas fa-graduation-cap me-2"></i>School News Board
+                    </h5>
+                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.8;">
+                        Stay updated with the latest news, announcements, and events from our school community.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="index.php" class="btn btn-back" style="display: inline-flex;">
+                        <i class="fas fa-home me-2"></i>Back to Homepage
+                    </a>
+                </div>
+            </div>
+            <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 2rem 0 1.5rem;">
+            <div style="text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">
+                <p style="margin: 0;">© <?= date('Y') ?> School News Board. Built with ❤️ by FOSS Team</p>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>

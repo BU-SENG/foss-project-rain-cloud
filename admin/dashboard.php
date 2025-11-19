@@ -7,7 +7,7 @@ if (!isAdmin()) {
 
 // Get statistics
 $total = $pdo->query("SELECT COUNT(*) FROM news")->fetchColumn();
-$today = $pdo->query("SELECT COUNT(*) FROM news WHERE DATE(published_at) = CURRENT_DATE")->fetchColumn();
+$today = $pdo->query("SELECT COUNT(*) FROM news WHERE DATE(published_at) = CURDATE()")->fetchColumn();
 $categories = $pdo->query("SELECT COUNT(*) FROM categories")->fetchColumn();
 
 // Recent news
@@ -22,11 +22,16 @@ $logs = $pdo->prepare("SELECT l.*, a.username
                        LEFT JOIN admins a ON l.admin_id = a.id 
                        ORDER BY l.created_at DESC LIMIT 10");
 $logs->execute();
-
-$page_title = 'Admin Dashboard';
-include '../includes/header.php';
 ?>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
     <?php include 'nav.php'; ?>
 
     <div class="container my-4">
@@ -107,5 +112,5 @@ include '../includes/header.php';
             </div>
         </div>
     </div>
-
-<?php include '../includes/footer.php'; ?>
+</body>
+</html>

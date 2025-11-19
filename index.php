@@ -9,7 +9,7 @@ $search = $_GET['search'] ?? '';
 $sql = "SELECT n.*, c.name as category_name, c.slug as category_slug 
         FROM news n 
         LEFT JOIN categories c ON n.category_id = c.id 
-        WHERE n.is_published = TRUE";
+        WHERE n.is_published = 1";
 
 $params = [];
 
@@ -19,7 +19,7 @@ if ($category) {
 }
 
 if ($search) {
-    $sql .= " AND to_tsvector('english', n.title || ' ' || n.content) @@ plainto_tsquery('english', ?)";
+    $sql .= " AND MATCH(n.title, n.content) AGAINST (? IN NATURAL LANGUAGE MODE)";
     $params[] = $search;
 }
 
@@ -33,8 +33,8 @@ $news = $stmt->fetchAll();
 $cats = $pdo->query("SELECT * FROM categories")->fetchAll();
 
 // Get stats
-$totalNews = $pdo->query("SELECT COUNT(*) FROM news WHERE is_published = TRUE")->fetchColumn();
-$todayNews = $pdo->query("SELECT COUNT(*) FROM news WHERE is_published = TRUE AND DATE(published_at) = CURRENT_DATE")->fetchColumn();
+$totalNews = $pdo->query("SELECT COUNT(*) FROM news WHERE is_published = 1")->fetchColumn();
+$todayNews = $pdo->query("SELECT COUNT(*) FROM news WHERE is_published = 1 AND DATE(published_at) = CURDATE()")->fetchColumn();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -265,7 +265,7 @@ $todayNews = $pdo->query("SELECT COUNT(*) FROM news WHERE is_published = TRUE AN
             border-radius: 50px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             background: rgba(255, 255, 255, 0.2);
-            color: rgba(1, 1, 1, 0.2);;
+            color: white;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
@@ -663,6 +663,73 @@ $todayNews = $pdo->query("SELECT COUNT(*) FROM news WHERE is_published = TRUE AN
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer style="background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: white; padding: 3rem 0 1.5rem; position: relative; z-index: 1; margin-top: 4rem;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h5 style="font-weight: 700; margin-bottom: 1.5rem; background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        <i class="fas fa-graduation-cap me-2"></i>School News Board
+                    </h5>
+                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.8;">
+                        Your trusted source for all school news, announcements, and events. Stay connected with our community.
+                    </p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(99, 102, 241, 0.2); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease;">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(99, 102, 241, 0.2); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease;">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(99, 102, 241, 0.2); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease;">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5 style="font-weight: 700; margin-bottom: 1.5rem;">Quick Links</h5>
+                    <ul style="list-style: none; padding: 0; color: rgba(255, 255, 255, 0.7);">
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="index.php" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: all 0.3s ease;">
+                                <i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Home
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="?category=academic" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: all 0.3s ease;">
+                                <i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Academic News
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="?category=sports" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: all 0.3s ease;">
+                                <i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Sports
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <a href="?category=events" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: all 0.3s ease;">
+                                <i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Events
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 style="font-weight: 700; margin-bottom: 1.5rem;">Categories</h5>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        <?php foreach ($cats as $cat): ?>
+                            <a href="?category=<?= $cat['slug'] ?>" style="padding: 0.5rem 1rem; border-radius: 50px; background: rgba(99, 102, 241, 0.2); color: white; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
+                                <?= $cat['name'] ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 2rem 0 1.5rem;">
+            <div style="text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">
+                <p style="margin: 0;">© <?= date('Y') ?> School News Board. Built with ❤️ by FOSS Team</p>
+                <p style="margin: 0.5rem 0 0;">Powered by PHP & PostgreSQL</p>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         // Smooth scroll
@@ -682,6 +749,30 @@ $todayNews = $pdo->query("SELECT COUNT(*) FROM news WHERE is_published = TRUE AN
                 setTimeout(() => {
                     card.style.opacity = '1';
                 }, index * 100);
+            });
+        });
+        
+        // Footer link hover effect
+        document.querySelectorAll('footer a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.style.color = '#6366f1';
+                this.style.paddingLeft = '0.5rem';
+            });
+            link.addEventListener('mouseleave', function() {
+                this.style.color = 'rgba(255, 255, 255, 0.7)';
+                this.style.paddingLeft = '0';
+            });
+        });
+        
+        // Social icon hover
+        document.querySelectorAll('footer a[style*="border-radius: 50%"]').forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                this.style.background = '#6366f1';
+                this.style.transform = 'translateY(-3px)';
+            });
+            icon.addEventListener('mouseleave', function() {
+                this.style.background = 'rgba(99, 102, 241, 0.2)';
+                this.style.transform = 'translateY(0)';
             });
         });
     </script>
