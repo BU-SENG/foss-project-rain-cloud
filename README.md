@@ -21,8 +21,8 @@ Live here: *https://rain-cloud-school-news.infinityfreeapp.com/*
 
 ## Requirements 🔧
 
-- PHP 7.4 or higher with PDO PostgreSQL extension
-- PostgreSQL 12 or higher
+- PHP 7.4 or higher
+- MySQL 5.7 or higher (or MariaDB 10.3+)
 - Apache/Nginx web server
 - mod_rewrite enabled
 
@@ -36,25 +36,21 @@ cd school-news-board
 
 ### 2. Database Setup
 ```bash
-# Create database and import schema
-psql -U postgres
-CREATE DATABASE school_news;
-\c school_news
-\i database.sql
+# Import the database schema
+mysql -u root -p < database.sql
 ```
 
-Or use pgAdmin:
-- Create a database named `school_news`
-- Run the SQL from `database.sql`
+Or use phpMyAdmin:
+- Create a database named `if0_40453990_school_news` (or your DB name)
+- Import `database.sql`
 
 ### 3. Configure Database
-Edit `config.php` and update your PostgreSQL credentials:
+Edit `config.php` and update your MySQL credentials:
 ```php
 define('DB_HOST', 'localhost');
-define('DB_PORT', '5432');
-define('DB_USER', 'postgres');
+define('DB_USER', 'root');
 define('DB_PASS', 'your_password');
-define('DB_NAME', 'school_news');
+define('DB_NAME', 'if0_40453990_school_news');
 ```
 
 ### 4. Set Permissions
@@ -133,6 +129,12 @@ define('MAX_UPLOAD_SIZE', 5242880); // 5MB in bytes
 define('ALLOWED_TYPES', ['image/jpeg', 'image/png', 'image/gif']);
 ```
 
+### Creating New Admin:
+```php
+$password = password_hash('newpassword', PASSWORD_DEFAULT);
+// Insert into admins table
+```
+
 ## Requirements Checklist ✅
 
 | Requirement | Status |
@@ -160,8 +162,9 @@ define('ALLOWED_TYPES', ['image/jpeg', 'image/png', 'image/gif']);
 - Verify `upload_max_filesize` in `php.ini`
 
 **Search not working:**
-- Ensure GIN index exists on news table for full-text search
-- PostgreSQL version must support ts_vector
+- Ensure FULLTEXT index exists on news table
+- MySQL version must support FULLTEXT search (5.6+)
+- Try rebuilding index: `REPAIR TABLE news QUICK;`
 
 **Login fails:**
 - Verify database connection in `config.php`
