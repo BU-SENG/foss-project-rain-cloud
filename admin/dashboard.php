@@ -7,7 +7,7 @@ if (!isAdmin()) {
 
 // Get statistics
 $total = $pdo->query("SELECT COUNT(*) FROM news")->fetchColumn();
-$today = $pdo->query("SELECT COUNT(*) FROM news WHERE DATE(published_at) = CURDATE()")->fetchColumn();
+$today = $pdo->query("SELECT COUNT(*) FROM news WHERE DATE(published_at) = CURRENT_DATE")->fetchColumn();
 $categories = $pdo->query("SELECT COUNT(*) FROM categories")->fetchColumn();
 
 // Recent news
@@ -22,18 +22,11 @@ $logs = $pdo->prepare("SELECT l.*, a.username
                        LEFT JOIN admins a ON l.admin_id = a.id 
                        ORDER BY l.created_at DESC LIMIT 10");
 $logs->execute();
+
+$page_title = 'Admin Dashboard';
+include '../includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body>
     <?php include 'nav.php'; ?>
 
     <div class="container my-4">
@@ -76,15 +69,15 @@ $logs->execute();
                     <div class="card-body">
                         <div class="list-group">
                             <?php foreach ($recent as $item): ?>
-                            <div class="list-group-item">
-                                <div class="d-flex justify-content-between">
-                                    <strong><?= htmlspecialchars($item['title']) ?></strong>
-                                    <span class="badge bg-info"><?= $item['category_name'] ?></span>
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <strong><?= htmlspecialchars($item['title']) ?></strong>
+                                        <span class="badge bg-info"><?= $item['category_name'] ?></span>
+                                    </div>
+                                    <small class="text-muted">
+                                        <?= date('M d, Y H:i', strtotime($item['published_at'])) ?>
+                                    </small>
                                 </div>
-                                <small class="text-muted">
-                                    <?= date('M d, Y H:i', strtotime($item['published_at'])) ?>
-                                </small>
-                            </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -99,14 +92,14 @@ $logs->execute();
                     <div class="card-body" style="max-height: 400px; overflow-y: auto;">
                         <div class="list-group">
                             <?php while ($log = $logs->fetch()): ?>
-                            <div class="list-group-item">
-                                <strong><?= htmlspecialchars($log['username']) ?></strong>:
-                                <?= htmlspecialchars($log['action']) ?>
-                                <br>
-                                <small class="text-muted">
-                                    <?= date('M d, Y H:i', strtotime($log['created_at'])) ?>
-                                </small>
-                            </div>
+                                <div class="list-group-item">
+                                    <strong><?= htmlspecialchars($log['username']) ?></strong>: 
+                                    <?= htmlspecialchars($log['action']) ?>
+                                    <br>
+                                    <small class="text-muted">
+                                        <?= date('M d, Y H:i', strtotime($log['created_at'])) ?>
+                                    </small>
+                                </div>
                             <?php endwhile; ?>
                         </div>
                     </div>
@@ -114,6 +107,5 @@ $logs->execute();
             </div>
         </div>
     </div>
-</body>
 
-</html>
+<?php include '../includes/footer.php'; ?>

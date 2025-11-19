@@ -19,16 +19,11 @@ $news = $pdo->query("SELECT n.*, c.name as category_name
                      FROM news n 
                      LEFT JOIN categories c ON n.category_id = c.id 
                      ORDER BY n.published_at DESC")->fetchAll();
+
+$page_title = 'Manage News';
+include '../includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage News</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+
     <?php include 'nav.php'; ?>
 
     <div class="container my-4">
@@ -40,7 +35,7 @@ $news = $pdo->query("SELECT n.*, c.name as category_name
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -74,5 +69,5 @@ $news = $pdo->query("SELECT n.*, c.name as category_name
             </div>
         </div>
     </div>
-</body>
-</html>
+
+<?php include '../includes/footer.php'; ?>
