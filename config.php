@@ -1,23 +1,21 @@
 <?php
-// Database configuration (Supabase PostgreSQL)
-define('DB_HOST', 'aws-1-eu-west-1.pooler.supabase.com');
-define('DB_PORT', '5432');
-define('DB_USER', 'postgres.pwywceahdfurihzhjkdp');
-define('DB_PASS', 'foss_news_board'); // Replace with your actual password
-define('DB_NAME', 'postgres');
+// Database configuration (InfinityFree MySQL)
+define('DB_HOST', 'sql109.infinityfree.com');
+define('DB_USER', 'if0_40453990');
+define('DB_PASS', '3dyyzkyD0K8');
+define('DB_NAME', 'if0_40453990_school_news');
 
 // Application settings
 define('UPLOAD_DIR', 'uploads/');
 define('MAX_UPLOAD_SIZE', 5242880); // 5MB
 define('ALLOWED_TYPES', ['image/jpeg', 'image/png', 'image/gif']);
 
-// Session configuration
 session_start();
 
-// Database connection (PostgreSQL with SSL for Supabase)
+// MySQL PDO connection
 try {
     $pdo = new PDO(
-        "pgsql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";sslmode=require",
+        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
         DB_USER,
         DB_PASS,
         [
