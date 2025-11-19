@@ -4,7 +4,7 @@
 
 A complete FOSS news management system for schools built with PHP and MySQL.
 
-Live here: *https://rain-cloud-school-news.infinityfreeapp.com/*
+Live here: **https://rain-cloud.great-site.net/**
 
 ## Features ✨
 

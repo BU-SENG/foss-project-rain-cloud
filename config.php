@@ -1,9 +1,9 @@
 <?php
 // Database configuration (InfinityFree MySQL)
-define('DB_HOST', 'sql109.infinityfree.com');
-define('DB_USER', 'if0_40453990');
-define('DB_PASS', '3dyyzkyD0K8');
-define('DB_NAME', 'if0_40453990_school_news');
+define('DB_HOST', 'sql308.infinityfree.com');
+define('DB_USER', 'if0_40460144');
+define('DB_PASS', '7sx0Qg6yNQGKwf');
+define('DB_NAME', 'if0_40460144_school_news');
 
 // Application settings
 define('UPLOAD_DIR', 'uploads/');
