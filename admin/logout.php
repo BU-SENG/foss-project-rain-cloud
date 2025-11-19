@@ -8,5 +8,4 @@ if (isAdmin()) {
 
 session_destroy();
 redirect('login.php');
-
 ?>
